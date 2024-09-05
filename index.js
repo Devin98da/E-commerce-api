@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 const UserRoute = require('./routes/user');
 const AuthRoute = require('./routes/auth');
 const ProductsRoute = require('./routes/product');
 const OrdersRoute = require('./routes/order');
 const CartRoute = require('./routes/cart');
+const StripeRoute = require('./routes/stripe');
 
 dotenv.config();
 
@@ -25,8 +27,10 @@ app.listen(process.env.PORT || 5000, () => {
     console.log('backend service is running');
 })
 
+app.use(cors());
 app.use('/api/user', UserRoute);
 app.use('/api/auth', AuthRoute);
 app.use('/api/products', ProductsRoute);
 app.use('/api/orders', OrdersRoute);
 app.use('/api/cart', CartRoute);
+app.use('/api/checkout', StripeRoute);
