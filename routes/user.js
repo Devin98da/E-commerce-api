@@ -44,9 +44,10 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res, next) => {
 //GET ALL
 router.get("/findall", verifyTokenAndAdmin, async (req, res, next) => {
     const query = req.query.new;
+    console.log(req)
 
     try {
-        const users = query ? await User.find().sort({ _id: -1 }).limit(1) : await User.find();
+        const users = query ? await User.find().sort({ _id: -1 }).limit(5) : await User.find();
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json(error);
@@ -70,7 +71,7 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res, next) => {
             },
             {
                 $group: {
-                    _id: "month",
+                    _id: "$month",
                     total: { $sum: 1 }
                 }
             }

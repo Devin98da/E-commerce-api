@@ -16,7 +16,7 @@ router.post('/register', async (req, res, next) => {
         const savedUser = await newUser.save();
         res.status(200).send(savedUser);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).send("Server error");
     }
 });
 
@@ -25,13 +25,17 @@ router.post("/login", async (req, res, next) => {
     try {
         const user = await User.findOne({ username: req.body.username });
 
-        !user && res.status(401).send("Can not find user with this email address");
+        if (!user) {
+            return res.status(401).send("Cannot find user with this email address");
+        }
 
         const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_ENC);
 
         const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
-        originalPassword !== req.body.password && res.status(401).send("Password is not match");
+        if (originalPassword !== req.body.password) {
+            return res.status(401).json("Incorrect password");
+        }
 
         const token = jwt.sign({
             id: user._id,
@@ -40,12 +44,13 @@ router.post("/login", async (req, res, next) => {
 
         const { password, ...others } = user._doc;
 
-        res.status(200).json({
-            token: token
+        return res.status(200).json({
+            token: token,
+            user: others
         });
 
     } catch (error) {
-
+        return res.status(500).send("Server error");
     }
 })
 

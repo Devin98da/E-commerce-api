@@ -5,8 +5,15 @@ const verifyToken = (req, res, next) => {
     const authHeader = req.headers.token;
     if (authHeader) {
         const token = authHeader.split(" ")[1];
+
+        if (!token) {
+            return res.status(401).json({ message: "Access Denied" });
+        }
+
         jwt.verify(token, process.env.JWT_SEC, (err, user) => {
-            if (err) res.status(403).json("Token is not valid!");
+            if (err) {
+                return res.status(403).json({ message: "Invalid Token" });
+            }
             req.user = user;
             next();
         });
@@ -17,7 +24,7 @@ const verifyToken = (req, res, next) => {
 
 const verifyTokenAndAutherization = (req, res, next) => {
     verifyToken(req, res, () => {
-        if (req.user.id === req.params.id || req.user.isAdmin) {
+        if (req.user && (req.user.id === req.params.id || req.user.isAdmin)) {
             next();
         } else {
             res.status(403).json("You are not alowed to do that!");
@@ -27,7 +34,8 @@ const verifyTokenAndAutherization = (req, res, next) => {
 
 const verifyTokenAndAdmin = (req, res, next) => {
     verifyToken(req, res, () => {
-        if (req.user.isAdmin ) {
+
+        if (req.user && req.user.isAdmin) {
             next();
         } else {
             res.status(403).json("You are not alowed to do that!");

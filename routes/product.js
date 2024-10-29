@@ -6,11 +6,12 @@ const router = require('express').Router();
 //CREATE PRODUCT
 router.post('/create', verifyTokenAndAdmin, async (req, res, next) => {
     const newProduct = new Product(req.body);
-
+    console.log(req.body)
     try {
         const createdProcut = await newProduct.save();
         res.status(200).json(createdProcut);
     } catch (error) {
+        console.log(error);
         res.status(500).json(error);
     }
 })
@@ -32,8 +33,12 @@ router.put("/update/:id", verifyTokenAndAdmin, async (req, res) => {
 //DELETE PRODUCT
 router.delete("/delete/:id", verifyTokenAndAdmin, async (req, res, next) => {
     try {
-        await Product.deleteOne({ id: req.params.id });
-        res.status(200).json("Product has been deleted succesfully");
+        await Product.deleteOne({ _id: req.params.id });
+        const products = await Product.find();
+        res.status(200).json({
+            message: "Product has been deleted succesfully",
+            products: products
+        });
     } catch (error) {
         res.status(500).json(error);
     }
@@ -77,5 +82,14 @@ router.get("/", async (req, res, next) => {
         res.status(500).json(error);
     }
 });
+
+//SEARCH
+router.post('/search', async (req, res, next) => {
+    try {
+        
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
 
 module.exports = router; 
