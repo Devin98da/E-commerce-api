@@ -22,6 +22,10 @@ const ProductSchema = new mongoose.Schema({
     price: {
         type: Number, required: true
     },
+    promotion: {
+        type: Number,
+        default : 0
+    },
     inStock: { type: Boolean, default: true }
 
 
