@@ -18,6 +18,7 @@ router.post('/create', verifyTokenAndAdmin, async (req, res, next) => {
 
 // UPDATE PRODUCT
 router.put("/update/:id", verifyTokenAndAdmin, async (req, res) => {
+    console.log("Body " + req.body)
 
     try {
         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, {
@@ -27,6 +28,7 @@ router.put("/update/:id", verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json(updatedProduct);
     } catch (error) {
         res.status(410).json(error);
+        console.log(error)
     }
 });
 
@@ -46,19 +48,17 @@ router.delete("/delete/:id", verifyTokenAndAdmin, async (req, res, next) => {
 
 //GET PRODUCT
 router.get("/find/:id", async (req, res, next) => {
-    console.log(req)
     try {
         const product = await Product.findOne({ _id: req.params.id });
-        console.log(product)
         res.status(200).json(product);
     } catch (error) {
         res.status(500).json(error);
+        console.log(error)
     }
 });
 
 //GET ALL PRODUCT
 router.get("/", async (req, res, next) => {
-    console.log(req.query);
     const qNew = req.query.new;
     const qCategory = req.query.category;
 

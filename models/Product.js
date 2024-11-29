@@ -24,12 +24,21 @@ const ProductSchema = new mongoose.Schema({
     },
     promotion: {
         type: Number,
-        default : 0
+        default: 0
     },
     inStock: { type: Boolean, default: true }
 
 
 }, { timestamps: true });
+
+ProductSchema.virtual('discountPrice').get(function() {
+    if (this.promotion > 0) {
+        return this.price * (1 - this.promotion / 100);
+    }
+    return this.price;
+});
+
+ProductSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model('Product', ProductSchema);
 
